@@ -6,12 +6,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.mst</groupId>
-    <artifactId>kruskal-mst</artifactId>
+    <artifactId>mst-algorithms</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Kruskal MST Algorithm</name>
-    <description>Implementation of Kruskal's algorithm for Minimum Spanning Tree</description>
+    <name>MST Algorithms - Kruskal and Prim</name>
+    <description>Implementation of Kruskal's and Prim's algorithms for Minimum Spanning Tree</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -41,30 +41,79 @@
                 </configuration>
             </plugin>
 
-            <!-- Exec Maven Plugin - to run Main class easily -->
+            <!-- Exec Maven Plugin - Default to Kruskal -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.1.0</version>
+
+                <executions>
+                    <execution>
+                        <id>run-kruskal</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>Kruskal</mainClass>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>run-prim</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>Prim</mainClass>
+                        </configuration>
+                    </execution>
+                </executions>
+
                 <configuration>
                     <mainClass>Kruskal</mainClass>
                 </configuration>
             </plugin>
 
-            <!-- Maven JAR Plugin - to create executable JAR -->
+            <!-- Maven JAR Plugin - to create executable JARs -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>Kruskal</mainClass>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <executions>
+                    <!-- Kruskal JAR -->
+                    <execution>
+                        <id>kruskal-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>kruskal</classifier>
+                            <archive>
+                                <manifest>
+                                    <mainClass>Kruskal</mainClass>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                    <!-- Prim JAR -->
+                    <execution>
+                        <id>prim-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>prim</classifier>
+                            <archive>
+                                <manifest>
+                                    <mainClass>Prim</mainClass>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>lib/</classpathPrefix>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <!-- Maven Dependency Plugin - copy dependencies to lib folder -->
@@ -86,13 +135,15 @@
                 </executions>
             </plugin>
 
-            <!-- Maven Shade Plugin - to create JAR with dependencies -->
+            <!-- Maven Shade Plugin - to create JARs with dependencies -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.0</version>
                 <executions>
+                    <!-- Kruskal fat JAR -->
                     <execution>
+                        <id>kruskal-shade</id>
                         <phase>package</phase>
                         <goals>
                             <goal>shade</goal>
@@ -103,7 +154,27 @@
                                     <mainClass>Kruskal</mainClass>
                                 </transformer>
                             </transformers>
-                            <finalName>kruskal-mst-all</finalName>
+                            <finalName>kruskal-mst</finalName>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>kruskal-all</shadedClassifierName>
+                        </configuration>
+                    </execution>
+                    <!-- Prim fat JAR -->
+                    <execution>
+                        <id>prim-shade</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>Prim</mainClass>
+                                </transformer>
+                            </transformers>
+                            <finalName>prim-mst</finalName>
+                            <shadedArtifactAttached>true</shadedArtifactAttached>
+                            <shadedClassifierName>prim-all</shadedClassifierName>
                         </configuration>
                     </execution>
                 </executions>
